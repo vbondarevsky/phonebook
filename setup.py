@@ -14,7 +14,8 @@ setup(
     python_requires=">=3.7.1",
     install_requires=[
         "pyyaml",
-        "aiohttp"
+        "aiohttp",
+        "SQLAlchemy",
     ],
     zip_safe=True,
     entry_points={

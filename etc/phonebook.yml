@@ -2,3 +2,5 @@ api:
   host: localhost
   port: 9797
   debug: True
+db:
+  name: D:\projects\phonebook\etc\phonebook.sqlite

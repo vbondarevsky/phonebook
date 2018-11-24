@@ -1,6 +1,7 @@
 import aiohttp
 
-from api.handler.base import BaseHandler
+from phonebook.api.handler.base import BaseHandler
+from phonebook.db.models import Contact
 
 
 class IdentificationHandler(BaseHandler):
@@ -12,7 +13,8 @@ class IdentificationHandler(BaseHandler):
         ]
 
     async def list(self, request):
-        return aiohttp.web.json_response({})
+        return aiohttp.web.json_response(self.success(Contact.list(request.app["db"])))
 
     async def add(self, request):
-        return aiohttp.web.json_response({})
+        Contact.add(request.app["db"], await request.json()["data"])
+        return aiohttp.web.json_response(self.success())

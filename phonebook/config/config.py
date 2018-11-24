@@ -1,7 +1,7 @@
 import yaml
 
 from phonebook.config.api_config import ApiConfig
-
+from phonebook.config.db_config import DbConfig
 
 try:
     from yaml import CLoader as Loader
@@ -23,6 +23,7 @@ class Config:
         config = self._config(path, source)
 
         self.api = self._api_config(config)
+        self.db = self._db_config(config)
 
     @staticmethod
     def _api_config(config):
@@ -37,6 +38,13 @@ class Config:
             if "debug" in config["api"]:
                 debug = config["api"]["debug"]
         return ApiConfig(host, port, debug)
+
+    @staticmethod
+    def _db_config(config):
+        name = ""
+        if "db" in config:
+            name = config["db"]["name"]
+        return DbConfig(name)
 
     @staticmethod
     def _config(path, source):
