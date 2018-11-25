@@ -13,8 +13,8 @@ class BlockingHandler(BaseHandler):
         ]
 
     async def list(self, request):
-        return aiohttp.web.json_response(self.success(Blacklist.list(request.app["db"])))
+        return aiohttp.web.json_response(self.success(Blacklist.list(request.app["db"], request["user_id"])))
 
     async def add(self, request):
-        Blacklist.add(request.app["db"], await request.json()["data"])
+        Blacklist.add(request.app["db"], request["user_id"], (await request.json())["data"])
         return aiohttp.web.json_response(self.success())

@@ -5,11 +5,12 @@ import aiohttp.web
 from phonebook import config
 from phonebook.db.connect import close_db
 from phonebook.db.connect import open_db
+from phonebook.middleware.basic_auth import basic_auth
 from phonebook.routes import setup_routes
 
 
 def run_server():
-    app = aiohttp.web.Application(debug=config.api.debug)
+    app = aiohttp.web.Application(debug=config.api.debug, middlewares=[basic_auth])
     setup_routes(app)
     app.on_startup.append(open_db)
     app.on_cleanup.append(close_db)

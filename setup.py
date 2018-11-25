@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 
 NAME = "phonebook"
-VERSION = "0.0.1"
+VERSION = "0.0.2"
 
 setup(
     name=NAME,
@@ -16,6 +16,7 @@ setup(
         "pyyaml",
         "aiohttp",
         "SQLAlchemy",
+        "passlib",
     ],
     zip_safe=True,
     entry_points={

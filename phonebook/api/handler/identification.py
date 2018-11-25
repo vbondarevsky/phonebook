@@ -13,8 +13,8 @@ class IdentificationHandler(BaseHandler):
         ]
 
     async def list(self, request):
-        return aiohttp.web.json_response(self.success(Contact.list(request.app["db"])))
+        return aiohttp.web.json_response(self.success(Contact.list(request.app["db"], request["user_id"])))
 
     async def add(self, request):
-        Contact.add(request.app["db"], await request.json()["data"])
+        Contact.add(request.app["db"], request["user_id"], (await request.json())["data"])
         return aiohttp.web.json_response(self.success())

@@ -9,7 +9,7 @@ class BaseHandler:
     @staticmethod
     def success(data=None):
         result = {"status": "ok"}
-        if data:
+        if data is not None:
             result["data"] = data
         return result
 

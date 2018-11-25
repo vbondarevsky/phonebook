@@ -4,6 +4,7 @@ from sqlalchemy import Sequence
 from sqlalchemy import String
 from sqlalchemy.ext.declarative import declarative_base
 
+
 Base = declarative_base()
 
 
@@ -16,8 +17,8 @@ class User(Base, DictMixin):
     __tablename__ = "user"
 
     id = Column(Integer, Sequence("user_id_seq"), primary_key=True)
-    user = Column(String(150), nullable=False)
-    password = Column(String(32), nullable=False)
+    name = Column(String(150), nullable=False)
+    hash = Column(String(100), nullable=False)
 
 
 class Blacklist(Base, DictMixin):
@@ -35,14 +36,16 @@ class Blacklist(Base, DictMixin):
         return f"<Blacklist({self.id}, {self.user}, {self.phone})>"
 
     @staticmethod
-    def add(db, items):
+    def add(db, user, items):
         for item in items:
-            db.add(Blacklist(**item))
+            contact = db.query(Blacklist).filter_by(phone=item, user=user).first()
+            if not contact:
+                db.add(Blacklist(user, item))
         db.commit()
 
     @staticmethod
-    def list(db):
-        return [item.dict() for item in db.query(Blacklist).all()]
+    def list(db, user):
+        return [contact.phone for contact in db.query(Blacklist).filter_by(user=user).all()]
 
 
 class Contact(Base, DictMixin):
@@ -50,23 +53,29 @@ class Contact(Base, DictMixin):
 
     id = Column(Integer, Sequence("user_id_seq"), primary_key=True)
     user = Column(Integer, nullable=False)
-    name = Column(String(150), nullable=False)
+    label = Column(String(150), nullable=False)
     phone = Column(String(1024), nullable=False)
 
-    def __init__(self, user, phone, name):
+    def __init__(self, user, phone, label):
         self.user = user
         self.phone = phone
-        self.name = name
+        self.label = label
 
     def __repr__(self):
-        return f"<Contact({self.id}, {self.user}, {self.phone}, {self.name})>"
+        return f"<Contact({self.id}, {self.user}, {self.phone}, {self.label})>"
 
     @staticmethod
-    def add(db, items):
+    def add(db, user, items):
         for item in items:
-            db.add(Contact(**item))
+            contact = db.query(Contact).filter_by(phone=item["phone"], user=user).first()
+            if contact:
+                contact.label = item["label"]
+            else:
+                item["user"] = user
+                db.add(Contact(**item))
         db.commit()
 
     @staticmethod
-    def list(db):
-        return [contact.dict() for contact in db.query(Contact).all()]
+    def list(db, user):
+        return [{"label": contact.label, "phone": contact.phone}
+                for contact in db.query(Contact).filter_by(user=user).all()]
