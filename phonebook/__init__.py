@@ -1,4 +1,3 @@
-from config import Config
-
+from phonebook.config import Config
 
 config = Config()
