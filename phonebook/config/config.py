@@ -29,15 +29,12 @@ class Config:
     def _api_config(config):
         host = "localhost"
         port = 9797
-        debug = False
         if "api" in config:
             if "host" in config["api"]:
                 host = config["api"]["host"]
             if "port" in config["api"]:
                 port = config["api"]["port"]
-            if "debug" in config["api"]:
-                debug = config["api"]["debug"]
-        return ApiConfig(host, port, debug)
+        return ApiConfig(host, port)
 
     @staticmethod
     def _db_config(config):

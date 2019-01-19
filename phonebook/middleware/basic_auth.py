@@ -1,4 +1,5 @@
 import aiohttp
+import aiohttp.web
 from passlib.handlers.pbkdf2 import pbkdf2_sha256
 
 from phonebook.db.models import User
@@ -14,5 +15,5 @@ async def basic_auth(request, handler):
             request["user_id"] = user.id
             return await handler(request)
         return aiohttp.web.HTTPUnauthorized()
-    except KeyError:
+    except KeyError as error:
         return aiohttp.web.HTTPUnauthorized()

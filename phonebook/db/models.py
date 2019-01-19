@@ -4,7 +4,6 @@ from sqlalchemy import Sequence
 from sqlalchemy import String
 from sqlalchemy.ext.declarative import declarative_base
 
-
 Base = declarative_base()
 
 
@@ -47,6 +46,15 @@ class Blacklist(Base, DictMixin):
     def list(db, user):
         return [contact.phone for contact in db.query(Blacklist).filter_by(user=user).all()]
 
+    @staticmethod
+    def delete(db, user, phones):
+        if phones:
+            db.query(Blacklist).filter(Blacklist.user == user).filter(Blacklist.phone.in_(phones)).delete(
+                synchronize_session=False)
+        else:
+            db.query(Blacklist).filter_by(user=user).delete(synchronize_session=False)
+        db.commit()
+
 
 class Contact(Base, DictMixin):
     __tablename__ = "contact"
@@ -79,3 +87,12 @@ class Contact(Base, DictMixin):
     def list(db, user):
         return [{"label": contact.label, "phone": contact.phone}
                 for contact in db.query(Contact).filter_by(user=user).all()]
+
+    @staticmethod
+    def delete(db, user, phones):
+        if phones:
+            db.query(Contact).filter(Contact.user == user).filter(Contact.phone.in_(phones)).delete(
+                synchronize_session=False)
+        else:
+            db.query(Contact).filter_by(user=user).delete(synchronize_session=False)
+        db.commit()
